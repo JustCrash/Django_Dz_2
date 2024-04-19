@@ -20,6 +20,7 @@ class Product(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Категория",
         help_text="Укажите категорию товара",
+        related_name="products",
     )
     purchase_price = models.IntegerField(
         max_length=50, verbose_name="Цена", help_text="Укажите цену та покупку товара"
