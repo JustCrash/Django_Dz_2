@@ -41,7 +41,8 @@ class Product(models.Model):
         related_name="products",
     )
     purchase_price = models.IntegerField(
-        max_length=50, verbose_name="Цена", help_text="Укажите цену за покупку товара"
+        verbose_name="Цена",
+        help_text="Укажите цену за покупку товара",
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -52,6 +53,11 @@ class Product(models.Model):
         auto_now=True,
         verbose_name="Дата последнего изменения",
         help_text="Укажите дату последнего изменения",
+    )
+    manufactured_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата производства продукта',
+        help_text='Напишите дату производства',
     )
 
     def __str__(self):
