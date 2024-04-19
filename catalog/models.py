@@ -58,11 +58,6 @@ class Product(models.Model):
         verbose_name="Дата последнего изменения",
         help_text="Укажите дату последнего изменения",
     )
-    manufactured_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Дата производства продукта',
-        help_text='Напишите дату производства',
-    )
 
     def __str__(self):
         return f"{self.name}"
