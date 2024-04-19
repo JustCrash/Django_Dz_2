@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                     "description",
                     models.TextField(
                         help_text="Напишите описание категории",
-                        **NULLABLE,
+                        max_length=300,
                         verbose_name="Описание",
                     ),
                 ),
@@ -69,14 +69,13 @@ class Migration(migrations.Migration):
                     "description",
                     models.TextField(
                         help_text="Напишите описание товара",
-                        **NULLABLE,
+                        max_length=300,
                         verbose_name="Описание",
                     ),
                 ),
                 (
                     "image",
                     models.ImageField(
-                        **NULLABLE,
                         help_text="Вставъте изображение товара",
                         upload_to="catalog/",
                         verbose_name="Изображение",
