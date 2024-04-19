@@ -1,6 +1,24 @@
 from django.db import models
 
 
+class Category(models.Model):
+    name = models.CharField(
+        max_length=50,
+        verbose_name="Наименование",
+        help_text="Введите наименование категории",
+    )
+    description = models.TextField(
+        max_length=300, verbose_name="Описание", help_text="Напишите описание категории"
+    )
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
+
 class Product(models.Model):
     name = models.CharField(
         max_length=50,
@@ -23,7 +41,7 @@ class Product(models.Model):
         related_name="products",
     )
     purchase_price = models.IntegerField(
-        max_length=50, verbose_name="Цена", help_text="Укажите цену та покупку товара"
+        max_length=50, verbose_name="Цена", help_text="Укажите цену за покупку товара"
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -43,21 +61,3 @@ class Product(models.Model):
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
         ordering = ["name", "category", "purchase_price"]
-
-
-class Category(models.Model):
-    name = models.CharField(
-        max_length=50,
-        verbose_name="Наименование",
-        help_text="Введите наименование категории",
-    )
-    description = models.TextField(
-        max_length=300, verbose_name="Описание", help_text="Напишите описание категории"
-    )
-
-    def __str__(self):
-        return f"{self.name}"
-
-    class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
