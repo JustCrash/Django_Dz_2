@@ -1,6 +1,9 @@
 from django.db import models
 
 
+NULLABLE = {'blank': True, 'null': True}
+
+
 class Category(models.Model):
     name = models.CharField(
         max_length=50,
@@ -8,7 +11,7 @@ class Category(models.Model):
         help_text="Введите наименование категории",
     )
     description = models.TextField(
-        max_length=300, verbose_name="Описание", help_text="Напишите описание категории"
+        **NULLABLE, verbose_name="Описание", help_text="Напишите описание категории"
     )
 
     def __str__(self):
@@ -26,9 +29,10 @@ class Product(models.Model):
         help_text="Введите наименование товара",
     )
     description = models.TextField(
-        max_length=300, verbose_name="Описание", help_text="Напишите описание товара"
+        **NULLABLE, verbose_name="Описание", help_text="Напишите описание товара"
     )
     image = models.ImageField(
+        **NULLABLE,
         upload_to="catalog/",
         verbose_name="Изображение",
         help_text="Вставъте изображение товара",
