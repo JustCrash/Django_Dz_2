@@ -13,7 +13,7 @@
                     <h1 class="card-title pricing-card-title">$ 140</h1>
                     <ul class="list-unstyled mt-3 mb-4 text-start m-3">
                         <li>- {{ product.name }}</li>
-                        <img class="card-img-top" src="{{ object.catalog | media }}">
+                        <img class="card-img-top" src="{{ product.image | media }}">
                         <li>- {{ product.category }}</li>
                         <li>- {{ product.purchase_price }}</li>
                         <li>- {{ product.created_at }}</li>
