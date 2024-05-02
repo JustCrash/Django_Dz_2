@@ -10,13 +10,13 @@
                 </div>
                 <div class="card-body">
                     <ul class="list-unstyled mt-3 mb-4 text-start m-3">
-                        <li>- {{ product.name }}</li>
+                        <li>- {{ object.name }}</li>
                         <img class="card-img-top" src="{{ product.image | media }}">
-                        <li>- {{ product.category }}</li>
-                        <li>- {{ product.purchase_price }}</li>
-                        <li>- {{ product.created_at }}</li>
-                        <li>- {{ product.updated_at }}</li>
-                        <li>- {{ product.description | truncatechars:100 }}</li>
+                        <li>- {{ object.category }}</li>
+                        <li>- {{ object.purchase_price }}</li>
+                        <li>- {{ object.created_at }}</li>
+                        <li>- {{ object.updated_at }}</li>
+                        <li>- {{ object.description | truncatechars:100 }}</li>
                     </ul>
                     <button type="button" class="btn btn-lg btn-block btn-outline-primary">Купить</button>
                 </div>
