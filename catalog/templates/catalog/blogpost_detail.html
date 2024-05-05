@@ -11,7 +11,7 @@
                 <div class="col">
                     <p class="card shadow-sm">
                         {% if object.preview %}
-                        <img class="card-img-top" src="{{ object.preview | my_media }}" alt="Картинок не завезли">
+                        <img class="card-img-top" src="{{ object.preview | media }}" alt="Картинок не завезли">
                         {% endif %}
                     </p>
                 </div>
@@ -21,7 +21,7 @@
                         <h5 class="card-title">{{ object.slug }}</h5>
                         <p class="card-text">{{ object.content }}</p>
                         <a href="#" class="card-link">{{ object.created_at }}</a>
-                        <a href="#" class="card-link"> Колличество просмотров{{ object.number_of_views }}</a>
+                        <a href="#" class="card-link"> Колличество просмотров - {{ object.number_of_views }}</a>
                     </div>
                 </div>
             </div>

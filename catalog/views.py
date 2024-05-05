@@ -43,8 +43,8 @@ class BlogPostListView(ListView):
 class BlogPostCreateView(CreateView):
     model = BlogPost
     fields = ["title", "content", "preview", "publication_sing", "number_of_views"]
-    template_name = "catalog/blog_post_form.html"
-    success_url = reverse_lazy("catalog:blogpost_form")
+    template_name = "catalog/blogpost_from.html"
+    success_url = reverse_lazy("catalog:blogpost_from")
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -62,7 +62,7 @@ class BlogPostCreateView(CreateView):
 class BlogPostUpdateView(UpdateView):
     model = BlogPost
     fields = ["title", "content", "preview", "publication_sing", "number_of_views"]
-    template_name = "catalog/blog_post_form.html"
+    template_name = "catalog/blogpost_from.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -101,6 +101,7 @@ class BlogPostDetailView(DetailView):
 
 class BlogPostDeleteView(DeleteView):
     model = BlogPost
+    template_name = "catalog/blogpost_delete.html"
     success_url = reverse_lazy("catalog:blogpost_list")
 
     def get_context_data(self, *args, **kwargs):

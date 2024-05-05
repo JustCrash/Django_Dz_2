@@ -19,7 +19,7 @@ urlpatterns = [
     path("contacts/", ContactsView.as_view(), name="contacts"),
     path("product/<int:pk>/", ProductDetailView.as_view(), name="product_detail"),
     path("catalog/", BlogPostListView.as_view(), name="blogpost_list"),
-    path("blogpost/create/", BlogPostCreateView.as_view(), name="blogpost_form"),
+    path("blogpost/create/", BlogPostCreateView.as_view(), name="blogpost_from"),
     path("blogpost/<int:pk>/", BlogPostDetailView.as_view(), name="blogpost_detail"),
     path(
         "blogpost/<int:pk>/update/",
