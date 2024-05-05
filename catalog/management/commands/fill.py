@@ -12,14 +12,14 @@ class Command(BaseCommand):
         for i in range(10):
             category_list.append(
                 Category(
-                    name=f'Category#{i+1}',
-                    description=f'This is another category #{i+1}'
+                    name=f"Category#{i+1}",
+                    description=f"This is another category #{i+1}",
                 )
             )
 
         Category.objects.bulk_create(category_list)
 
-        category_id_list = list(Category.objects.all().values_list('id', flat=True))
+        category_id_list = list(Category.objects.all().values_list("id", flat=True))
         max_id = max(category_id_list)
         min_id = min(category_id_list)
 
@@ -27,10 +27,10 @@ class Command(BaseCommand):
         for i in range(100):
             product_list.append(
                 Product(
-                    name=f'Product#{i}',
-                    description=f'This is description for product #{i}',
+                    name=f"Product#{i}",
+                    description=f"This is description for product #{i}",
                     category_id=random.randint(min_id, max_id),
-                    purchase_price=random.random() * 1000
+                    purchase_price=random.random() * 1000,
                 )
             )
 

@@ -1,7 +1,7 @@
 from django.db import models
 
 
-NULLABLE = {'blank': True, 'null': True}
+NULLABLE = {"blank": True, "null": True}
 
 
 class Category(models.Model):
@@ -71,42 +71,42 @@ class Product(models.Model):
 class BlogPost(models.Model):
     title = models.CharField(
         max_length=255,
-        verbose_name='Заголовок',
-        help_text='Напишите заголовок',
+        verbose_name="Заголовок",
+        help_text="Напишите заголовок",
     )
     slug = models.CharField(
         max_length=255,
-        verbose_name='Ссылка',
+        verbose_name="Ссылка",
         **NULLABLE,
-        help_text='Вставте ссылку',
+        help_text="Вставте ссылку",
     )
     content = models.TextField(
-        verbose_name='Содержание',
-        help_text='Напишите содержание',
+        verbose_name="Содержание",
+        help_text="Напишите содержание",
     )
     preview = models.ImageField(
-        upload_to='catalog/',
-        verbose_name='Изображение',
-        help_text='Вставте изображение',
+        upload_to="catalog/",
+        verbose_name="Изображение",
+        help_text="Вставте изображение",
         **NULLABLE,
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Дата создания',
-        help_text='Укажите дату создания',
+        verbose_name="Дата создания",
+        help_text="Укажите дату создания",
     )
     publication_sing = models.BooleanField(
         default=True,
-        verbose_name='Опубликовать',
+        verbose_name="Опубликовать",
     )
     number_of_views = models.IntegerField(
         default=0,
-        verbose_name='Количество просмотров',
+        verbose_name="Количество просмотров",
     )
 
     def __str__(self):
         return f"{self.title}"
 
     class Meta:
-        verbose_name = 'Запись'
-        verbose_name_plural = 'Записи'
+        verbose_name = "Запись"
+        verbose_name_plural = "Записи"
