@@ -68,6 +68,20 @@ class Product(models.Model):
         ordering = ["name", "category", "purchase_price"]
 
 
+class Contacts(models.Model):
+    city = models.CharField(max_length=50, verbose_name="Страна")
+    identity_nalog_number = models.IntegerField(verbose_name="ИНН")
+    address = models.TextField(verbose_name="Адрес")
+    slug = models.CharField(max_length=255, verbose_name="URL", **NULLABLE)
+
+    def __str__(self):
+        return f"{self.city} {self.identity_nalog_number} {self.address}"
+
+    class Meta:
+        verbose_name = "Контакт"
+        verbose_name_plural = "Контакты"
+
+
 class BlogPost(models.Model):
     title = models.CharField(
         max_length=255,

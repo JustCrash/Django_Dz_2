@@ -9,21 +9,38 @@ from django.views.generic import (
 from django.urls import reverse_lazy
 from pytils.translit import slugify
 
-from catalog.models import Product, BlogPost
+from catalog.models import Product, BlogPost, Contacts
 
 
 class HomeListView(ListView):
     model = Product
     template_name = "catalog/product_list_basic.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Каталог товаров"
+        return context
+
 
 class ProductDetailView(DetailView):
     model = Product
     template_name = "catalog/product_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["product_item"] = self.get_object()
+        context["title"] = f'Продукт #{context["product_item"].name}'
+        return context
+
 
 class ContactsView(TemplateView):
+    model = Contacts
     template_name = "catalog/contacts.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Контакты"
+        return context
 
 
 class BlogPostListView(ListView):
