@@ -6,10 +6,12 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
+from django.forms import inlineformset_factory
+from catalog.forms import ProductForm, VersionForm
 from django.urls import reverse_lazy
 from pytils.translit import slugify
 
-from catalog.models import Product, BlogPost, Contacts
+from catalog.models import Product, BlogPost, Contacts, Version
 
 
 class HomeListView(ListView):
@@ -30,6 +32,63 @@ class ProductDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["product_item"] = self.get_object()
         context["title"] = f'Продукт #{context["product_item"].name}'
+        return context
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = "catalog/product_from.html"
+    success_url = reverse_lazy("catalog:product_list_basic")
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Создание продукта"
+        return context
+
+    def form_valid(self, form):
+        product = form.save()
+        user = self.request.user
+        product.owner = user
+        product.save()
+        return super().form_valid()
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'catalog/product_from.html'
+    success_url = reverse_lazy('catalog:product_list_basic')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ProductFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+        if self.request.method == "POST":
+            context['formset'] = ProductFormset(self.request.POST, instance=self.object)
+        else:
+            context['formset'] = ProductFormset(instance=self.object)
+        context['title'] = 'Изменить продукт'
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        if form.is_valid() and formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            return super().form_valid(form)
+        else:
+            return self.render_to_response(self.get_context_data(form=form, formset=formset))
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy('catalog:product_list_basic')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Удалить продукт'
         return context
 
 
