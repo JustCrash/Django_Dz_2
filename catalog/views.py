@@ -16,22 +16,34 @@ from catalog.models import Product, BlogPost, Contacts, Version
 
 class HomeListView(ListView):
     model = Product
-    template_name = "catalog/product_list_basic.html"
+    template_name = 'catalog/product_list_basic.html'
+    extra_context = {'title': 'Каталог товаров'}
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Каталог товаров"
-        return context
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        # products = Product.objects.all()
+        products = self.get_queryset(*args, **kwargs)
+
+        for product in products:
+            versions = Version.objects.filter(product=product)
+            active_versions = versions.filter(is_active_version=True)
+            if active_versions:
+                product.active_version = active_versions.last()
+            else:
+                product.active_version = 'Нет активной версии'
+
+        context_data['object_list'] = products
+        return context_data
 
 
 class ProductDetailView(DetailView):
     model = Product
-    template_name = "catalog/product_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["product_item"] = self.get_object()
-        context["title"] = f'Продукт #{context["product_item"].name}'
+        product_item = self.get_object()
+        context['product_item'] = product_item
+        context['title'] = f'Продукт #{product_item.id}'
         return context
 
 
