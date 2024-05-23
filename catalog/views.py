@@ -1,42 +1,20 @@
-from django.views.generic import (
-    ListView,
-    DetailView,
-    TemplateView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-)
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.forms import inlineformset_factory
-from catalog.forms import ProductForm, VersionForm
+from catalog.forms import ProductForm, VersionForm, ProductModeratorForm
+from catalog.models import Product, Contacts, BlogPost, Version
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from pytils.translit import slugify
 
-from catalog.models import Product, BlogPost, Contacts, Version
 
-
-class HomeListView(ListView):
+class HomeListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'catalog/product_list_basic.html'
-    extra_context = {'title': 'Каталог товаров'}
-
-    def get_context_data(self, *args, **kwargs):
-        context_data = super().get_context_data(*args, **kwargs)
-        # products = Product.objects.all()
-        products = self.get_queryset(*args, **kwargs)
-
-        for product in products:
-            versions = Version.objects.filter(product=product)
-            active_versions = versions.filter(is_active_version=True)
-            if active_versions:
-                product.active_version = active_versions.last()
-            else:
-                product.active_version = 'Нет активной версии'
-
-        context_data['object_list'] = products
-        return context_data
+    extra_context = {'title': 'Продукты на любой вкус'}
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
 
     def get_context_data(self, **kwargs):
@@ -47,15 +25,15 @@ class ProductDetailView(DetailView):
         return context
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
-    template_name = "catalog/product_from.html"
-    success_url = reverse_lazy("catalog:product_list_basic")
+    template_name = 'catalog/product_from.html'
+    success_url = reverse_lazy('catalog:product_list_basic')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Создание продукта"
+        context['title'] = 'Добавить продукт'
         return context
 
     def form_valid(self, form):
@@ -66,9 +44,8 @@ class ProductCreateView(CreateView):
         return super().form_valid()
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
-    form_class = ProductForm
     template_name = 'catalog/product_from.html'
     success_url = reverse_lazy('catalog:product_list_basic')
 
@@ -93,8 +70,19 @@ class ProductUpdateView(UpdateView):
         else:
             return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return ProductForm
+        if (user.has_perm('product.cancellation_of_publication')
+                and user.has_perm('product.changes_the_description')
+                and user.has_perm('product.changes_the_category')):
+            return ProductModeratorForm
+        else:
+            return PermissionDenied
 
-class ProductDeleteView(DeleteView):
+
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:product_list_basic')
 
@@ -104,39 +92,31 @@ class ProductDeleteView(DeleteView):
         return context
 
 
-class ContactsView(TemplateView):
+class ContactsView(ListView):
     model = Contacts
-    template_name = "catalog/contacts.html"
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Контакты"
-        return context
+    extra_context = {'title': 'Контакты'}
+    template_name = 'catalog/contacts.html'
 
 
 class BlogPostListView(ListView):
     model = BlogPost
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Блоговая запись"
-        return context
+    template_name = 'catalog/blogpost_list.html'
+    extra_context = {'title': ' Блоговая запись'}
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset()
-        queryset = queryset.filter(publication_sing=True)
         return queryset
 
 
 class BlogPostCreateView(CreateView):
     model = BlogPost
-    fields = ["title", "content", "preview", "publication_sing", "number_of_views"]
-    template_name = "catalog/blogpost_from.html"
-    success_url = reverse_lazy("catalog:blogpost_from")
+    fields = ['title', 'content', 'preview', 'publication_sign', 'number_of_views']
+    template_name = 'catalog/blogpost_from.html'
+    success_url = reverse_lazy('catalog:blogpost_from')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Создание блоговой записи"
+        context['title'] = 'Добавить запись в блог'
         return context
 
     def form_valid(self, form):
@@ -144,7 +124,7 @@ class BlogPostCreateView(CreateView):
             new_blog = form.save()
             new_blog.slug = slugify(new_blog.title)
             new_blog.save()
-            return super().form_valid(form)
+        return super().form_valid(form)
 
 
 class BlogPostUpdateView(UpdateView):
@@ -159,25 +139,25 @@ class BlogPostUpdateView(UpdateView):
 
     def form_valid(self, form):
         if form.is_valid():
-            new_blog = form.save()
+            new_blog = form.save(commit=False)
             new_blog.slug = slugify(new_blog.title)
             new_blog.save()
-            return super().form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("catalog:blogpost_detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy('catalog:blogpost_detail', kwargs={'pk': self.object.pk})
 
 
 class BlogPostDetailView(DetailView):
     model = BlogPost
-    template_name = "catalog/blogpost_detail.html"
-    success_url = reverse_lazy("catalog:blogpost_list")
+    template_name = 'catalog/blogpost_detail.html'
+    success_url = reverse_lazy('catalog:blogpost_detail')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         blogpost_item = self.get_object()
-        context["blogpost_item"] = blogpost_item
-        context["title"] = f"Запись в блоге #{blogpost_item.id}"
+        context['blogpost_item'] = blogpost_item
+        context['title'] = f'Запись в блоге #{blogpost_item.id}'
         return context
 
     def get_object(self, queryset=None):
@@ -194,5 +174,5 @@ class BlogPostDeleteView(DeleteView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Удаление блоговой записи"
+        context['title'] = 'Удалить запись из блога'
         return context
