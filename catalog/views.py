@@ -78,8 +78,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
                 and user.has_perm('product.changes_the_description')
                 and user.has_perm('product.changes_the_category')):
             return ProductModeratorForm
-        else:
-            return PermissionDenied
+        raise PermissionDenied
 
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
