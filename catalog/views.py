@@ -2,10 +2,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.forms import inlineformset_factory
 from catalog.forms import ProductForm, VersionForm, ProductModeratorForm
-from catalog.models import Product, Contacts, BlogPost, Version
+from catalog.models import Product, Contacts, BlogPost, Version, Category
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from pytils.translit import slugify
+from config.services import get_cached_data
 
 
 class HomeListView(LoginRequiredMixin, ListView):
@@ -90,6 +91,32 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
         context['title'] = 'Удалить продукт'
         return context
 
+
+class CategoryListView(LoginRequiredMixin, ListView):
+    model = Category
+    template_name = 'catalog/category_list.html'
+    extra_context = {'title': 'Категории продуктов'}
+
+    def get_queryset(self):
+        return get_cached_data(self.model)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Категории продуктов'
+        return context
+
+
+class CategoryDetailView(LoginRequiredMixin, DetailView):
+    model = Category
+    extra_context = {'title': 'Категории продуктов'}
+    template_name = 'catalog/category_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_item = self.get_object()
+        context['category_item'] = category_item
+        context['title'] = f'Категория #{category_item.id}'
+        return context
 
 class ContactsView(ListView):
     model = Contacts
