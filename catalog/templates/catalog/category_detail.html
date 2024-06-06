@@ -10,13 +10,13 @@
             <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 g-3">
                 <div class="col">
                     <p class="card shadow-sm">
-                        <img class="card-img-top" src="{{ object.picture|my_media }}" alt="Картинок не завезли">
+                        <img class="card-img-top" src="{{ object.picture|media }}" alt="Картинок не завезли">
                     </p>
                 </div>
                 <div class="col-5 text-md-start">
                     {{ object.description|truncatechars:20 }}
                     <p>
-                        <a href="{% url 'catalog:contacts_list' %}"
+                        <a href="{% url 'catalog:contacts' %}"
                            class="btn btn-primary justify-content-md-center my-5">Купить за {{object.purchase_price}} $</a>
                     </p>
                 </div>
