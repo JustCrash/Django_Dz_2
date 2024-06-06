@@ -14,6 +14,14 @@ class HomeListView(LoginRequiredMixin, ListView):
     template_name = 'catalog/product_list_basic.html'
     extra_context = {'title': 'Продукты на любой вкус'}
 
+    def get_queryset(self):
+        return get_cached_data(self.model)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Продукты на любой вкус'
+        return context
+
 
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
